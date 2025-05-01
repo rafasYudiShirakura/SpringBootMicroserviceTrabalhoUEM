@@ -22,13 +22,15 @@ public class ApplicationConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http)throws Exception{
         CorsConfigurationSource corsConfigurationSource;
         http.sessionManagement(
-                managment -> managment.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS)
-        ).authorizeHttpRequests(
-                Autorize->Autorize.requestMatchers("/**").authenticated().anyRequest().permitAll()
-        ).addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
-                .csrf(csrf->csrf.disable())
-                .cors(cors->cors.configurationSource(corsConfigurationSource()))
+                        management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                ).authorizeHttpRequests(
+                        authorize -> authorize
+                                .requestMatchers("/auth/**").permitAll()  // libera autenticação e registro
+                                .anyRequest().authenticated()             // exige token para o resto
+                )
+                .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
         return http.build();
