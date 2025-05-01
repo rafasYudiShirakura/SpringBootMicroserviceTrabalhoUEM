@@ -18,10 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -47,17 +44,21 @@ public class AuthController {
         User isEmailValid = userRepository.findByEmail(email);
 
         if (isEmailValid != null){
-            throw new Exception("Email already exists in another accound...");
+            AuthResponse authResponse = new AuthResponse();
+            authResponse.setMessage("Email já existente");
+            return new ResponseEntity<>(authResponse, HttpStatus.CONFLICT);
+//            throw new Exception("Email already exists in another account...");
         }
 
         User createdUser = new User();
         createdUser.setEmail(email);
+        createdUser.setPassword(passwordEncoder.encode(password));
         createdUser.setFullName(fullName);
         createdUser.setRole(role);
-        createdUser.setPassword(password);
+
 
         User savedUser = userRepository.save(createdUser);
-        userRepository.save(savedUser);
+
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -108,4 +109,11 @@ public class AuthController {
         }
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
+//    @GetMapping("/hello")
+//    public String Hello(){
+//        return "Hello World";
+//    }
+
 }
+
+
