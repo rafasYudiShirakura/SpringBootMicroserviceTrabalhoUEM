@@ -22,6 +22,18 @@ code {
   border-radius: 5px;
 }
 
+.techStack {
+  color: #c24ff0;
+  border: 2px solid #c24dd0;
+  padding: 0.5rem 2rem;
+  
+} 
+
+.customButton{
+    background-image: linear-gradient(150deg, #c24dd0, #7a72fa);
+    color: white !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
